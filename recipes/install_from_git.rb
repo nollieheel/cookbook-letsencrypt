@@ -21,7 +21,8 @@
 cb = cookbook_name
 
 apt_repository 'git' do
-  uri 'ppa:git-core/ppa'
+  uri          'ppa:git-core/ppa'
+  distribution node['lsb']['codename']
 end
 
 include_recipe 'git'
