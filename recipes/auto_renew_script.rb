@@ -27,7 +27,7 @@ directory node[cb]['renew']['script_dir'] do
 end
 
 template "#{node[cb]['renew']['script_dir']}/auto_renew" do
-  action   :create_if_missing
+  action   :create
   notifies :run, 'execute[schedule_auto_renew]'
   variables(
     :days          => node[cb]['renew']['days'],
@@ -37,6 +37,7 @@ template "#{node[cb]['renew']['script_dir']}/auto_renew" do
     :source_dir    => node[cb]['source_dir'],
     :email_subject => node[cb]['renew']['fail_subject'],
     :email_to      => node[cb]['renew']['fail_email'],
+    :s_actions     => node[cb]['renew']['success_actions'],
     :sendmail_bin  => node[cb]['sendmail_bin'],
     :log_path      => node[cb]['log_path']
   )

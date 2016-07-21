@@ -84,6 +84,12 @@ Currently tested on Ubuntu 14.04.
     <td><tt>'LetsEncrypt Cert Renewal Failure Alert'</tt></td>
   </tr>
   <tr>
+    <td><tt>['cookbook-letsencrypt']['renew']['success_actions']</tt></td>
+    <td>Array</td>
+    <td>Bash commands to perform immediately once the Letsencrypt "renew" call is successful.</td>
+    <td><tt>[]</tt></td>
+  </tr>
+  <tr>
     <td><tt>['cookbook-letsencrypt']['sendmail_bin']</tt></td>
     <td>String</td>
     <td>Enter here the location of the sendmail binary.</td>

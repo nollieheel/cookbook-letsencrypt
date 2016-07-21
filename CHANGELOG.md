@@ -1,3 +1,7 @@
+# 0.2.0
+
+Allow option to run some bash commands right after renewal
+
 # 0.1.2
 
 Add distribution attribute to apt_repository resource

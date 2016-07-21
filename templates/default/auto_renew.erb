@@ -64,14 +64,22 @@ elif [[ "$proceed" == run ]] ; then
 
     service "$webserver" start
 
-    <% if @email_to -%>
+<% if @email_to -%>
     if [[ $res -ne 0 ]] ; then
         ERRLOG=$( tail "$log_path" )
         echo -e "Subject: ${email_subj}\nTo: ${email_to}\n\n${ERRLOG}" |
             $sendmail_bin -t
     fi
 
-    <% end -%>
+<% end -%>
+<% unless @s_actions.nil? || @s_actions.length == 0 -%>
+    if [[ $res -eq 0 ]] ; then
+<%   @s_actions.each do |sact| -%>
+        <%= sact %>
+<%   end -%>
+    fi
+
+<% end -%>
     sleep 1 && $comm -s &
 
 fi

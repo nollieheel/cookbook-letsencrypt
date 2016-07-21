@@ -48,6 +48,8 @@ default[cb]['renew']['time'] = '8am' # Timezone depends on server.
 default[cb]['renew']['fail_email']   = 'your@email.here'
 default[cb]['renew']['fail_subject'] = 'LetsEncrypt Cert Renewal Failure Alert'
 
+default[cb]['renew']['success_actions'] = []
+
 # Constants:
 
 default[cb]['sendmail_bin'] = '/usr/sbin/sendmail'
