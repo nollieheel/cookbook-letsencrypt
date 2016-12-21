@@ -33,10 +33,8 @@ node[cb]['configs'].each do |conf|
     name = conf[:domains][0]
 
     template "#{node[cb]['config_dir']}/config_#{name}.ini" do
-      source   'config.ini.erb'
-      action   :create_if_missing
-      mode     0444
-      notifies :run, "execute[get_cert_#{name}]", :immediately
+      source 'config.ini.erb'
+      mode   0444
       variables(
         :rsa_key_size  => conf[:rsa_key_size] || '4096',
         :authenticator => conf[:authenticator] || 'standalone',
@@ -47,7 +45,8 @@ node[cb]['configs'].each do |conf|
 
     execute "get_cert_#{name}" do
       command "#{comm} --config #{node[cb]['config_dir']}/config_#{name}.ini"
-      action  :nothing
+      only_if { node[cb]['obtain_certs'] }
+      not_if  { Dir.exist?("#{node[cb]['install_dir']}/archive/#{name}") }
     end
 
   end

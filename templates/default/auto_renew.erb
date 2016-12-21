@@ -53,12 +53,15 @@ elif [[ "$proceed" == sched ]] ; then
               at -M "$run_time" + "$run_days" days )
     fi
 
+    echo "Auto-renew set to run in ${run_days} days at ${run_time}."
+
 elif [[ "$proceed" == run ]] ; then
 
-    # Script needs to stop currently running webserver to try renewal
+    echo "Script needs to temporarily stop ${webserver}."
     service "$webserver" stop
     sleep 2
 
+    echo "Renewing certificates."
     $letsencrypt_bin renew
     res=$?
 
@@ -66,6 +69,7 @@ elif [[ "$proceed" == run ]] ; then
 
 <% if @email_to -%>
     if [[ $res -ne 0 ]] ; then
+        echo "Error detected. Emailing ${email_to} now."
         ERRLOG=$( tail "$log_path" )
         echo -e "Subject: ${email_subj}\nTo: ${email_to}\n\n${ERRLOG}" |
             $sendmail_bin -t
@@ -80,6 +84,7 @@ elif [[ "$proceed" == run ]] ; then
     fi
 
 <% end -%>
+    echo "Automatically scheduling the next auto-renew script run."
     sleep 1 && $comm -s &
 
 fi

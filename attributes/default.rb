@@ -22,15 +22,16 @@ cb = 'cookbook-letsencrypt'
 
 default[cb]['configs'] = [
   #{
-    #:rsa_key_size  => '4096',
-    #:email         => 'admin@email.com',
-    #:domains       => ['example.com'],
+    #:rsa_key_size  => '4096',            # default: '4096'
+    #:email         => 'admin@email.com', # default: ''
+    #:domains       => ['example.com'],   # default: []
     ## No other authenticator plugins are supported yet by this cookbook
-    #:authenticator => 'standalone'
+    #:authenticator => 'standalone'       # default: 'standalone'
   #}
 ]
-default[cb]['test']       = true # whether we are testing or not
-default[cb]['repo_url']   = 'https://github.com/letsencrypt/letsencrypt.git'
+default[cb]['obtain_certs'] = true
+default[cb]['test']         = true # whether we are testing or not
+default[cb]['repo_url']     = 'https://github.com/letsencrypt/letsencrypt.git'
 default[cb]['source_dir'] = '/opt/letsencrypt/letsencrypt'
 default[cb]['config_dir'] = '/opt/letsencrypt/config'
 
@@ -54,3 +55,4 @@ default[cb]['renew']['success_actions'] = []
 
 default[cb]['sendmail_bin'] = '/usr/sbin/sendmail'
 default[cb]['log_path']     = '/var/log/letsencrypt/letsencrypt.log'
+default[cb]['install_dir']  = '/etc/letsencrypt'
