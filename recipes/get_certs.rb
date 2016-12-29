@@ -24,8 +24,7 @@ directory node[cb]['config_dir'] do
   recursive true
 end
 
-comm = "#{node[cb]['source_dir']}/letsencrypt-auto certonly"
-if node[cb]['test'] then comm << ' --test-cert' end
+comm0 = "#{node[cb]['source_dir']}/letsencrypt-auto certonly"
 
 node[cb]['configs'].each do |conf|
   if conf[:domains].is_a?(Array) && conf[:domains].length > 0
@@ -43,10 +42,19 @@ node[cb]['configs'].each do |conf|
       )
     end
 
-    execute "get_cert_#{name}" do
-      command "#{comm} --config #{node[cb]['config_dir']}/config_#{name}.ini"
-      only_if { node[cb]['obtain_certs'] }
-      not_if  { Dir.exist?("#{node[cb]['install_dir']}/archive/#{name}") }
+    get_cert = conf.has_key?(:get_cert) ? conf[:get_cert] : true
+    test     = conf.has_key?(:test) ? conf[:test] : true
+    comm1    = test ? ' --test-cert' : ''
+
+    archive_dir = "#{node[cb]['install_dir']}/archive/#{name}"
+    unless Dir.exist?(archive_dir)
+      execute "get_cert_#{name}" do
+        command "#{comm0}#{comm1} --config "\
+                "#{node[cb]['config_dir']}/config_#{name}.ini"
+        only_if { get_cert }
+      end
+    else
+      log "Letsencrypt archive dir exists: #{archive_dir}. Skipping get_cert."
     end
 
   end

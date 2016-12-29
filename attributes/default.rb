@@ -26,11 +26,12 @@ default[cb]['configs'] = [
     #:email         => 'admin@email.com', # default: ''
     #:domains       => ['example.com'],   # default: []
     ## No other authenticator plugins are supported yet by this cookbook
-    #:authenticator => 'standalone'       # default: 'standalone'
+    #:authenticator => 'standalone',      # default: 'standalone'
+
+    #:test     => true, # default: true # Whether testing or not
+    #:get_cert => true  # default: true # Try to obtain certs or not
   #}
 ]
-default[cb]['obtain_certs'] = true
-default[cb]['test']         = true # whether we are testing or not
 default[cb]['repo_url']     = 'https://github.com/letsencrypt/letsencrypt.git'
 default[cb]['source_dir'] = '/opt/letsencrypt/letsencrypt'
 default[cb]['config_dir'] = '/opt/letsencrypt/config'

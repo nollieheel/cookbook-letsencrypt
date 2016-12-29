@@ -1,3 +1,7 @@
+## 0.3.0 - 2016-12-29
+### Changed
+- Moved the 'obtain_certs' and 'test' attributes to the individual config hashes to make it more flexible. Each hash in the 'config' attribute can now have the `:test` and/or `:get_cert` property/ies (both default to `true` if not given).
+
 ## 0.2.1 - 2016-12-21
 ### Added
 - Add an attribute that controls whether or not certificates are obtained from LE api.

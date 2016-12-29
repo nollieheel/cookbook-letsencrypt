@@ -20,20 +20,8 @@ Currently tested on Ubuntu 14.04.
   <tr>
     <td><tt>['cookbook-letsencrypt']['configs']</tt></td>
     <td>Array</td>
-    <td>Array of hashes detailing the certificates needed. An example hash is: `{ :email => 'admin@mydomain.com', :domains => ['mydomain.com'] }`.</td>
+    <td>Array of hashes detailing the certificates needed, whether it's for testing or production, and if to actually try and obtain those certificates. An example hash is: `{ :email => 'admin@mydomain.com', :domains => ['mydomain.com'] }`.</td>
     <td><tt>[]</tt></td>
-  </tr>
-  <tr>
-    <td><tt>['cookbook-letsencrypt']['obtain_certs']</tt></td>
-    <td>Boolean</td>
-    <td>Whether or not to actually try and obtain the certificates (i.e., run 'letsencrypt-auto certonly').</td>
-    <td><tt>true</tt></td>
-  </tr>
-  <tr>
-    <td><tt>['cookbook-letsencrypt']['test']</tt></td>
-    <td>Boolean</td>
-    <td>Set to true during testing, false on live servers.</td>
-    <td><tt>true</tt></td>
   </tr>
   <tr>
     <td><tt>['cookbook-letsencrypt']['repo_url']</tt></td>
