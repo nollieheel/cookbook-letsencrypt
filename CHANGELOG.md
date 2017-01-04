@@ -1,4 +1,7 @@
-## 0.3.0 - 2016-12-29
+## 0.3.1 - 2016-01-04
+- Update metadata.rb to correct value.
+
+## 0.3.0 - 2016-12-29 [YANKED]
 ### Changed
 - Moved the 'obtain_certs' and 'test' attributes to the individual config hashes to make it more flexible. Each hash in the 'config' attribute can now have the `:test` and/or `:get_cert` property/ies (both default to `true` if not given).
 
