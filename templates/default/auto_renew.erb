@@ -15,7 +15,9 @@ sendmail_bin=<%= @sendmail_bin %>
 
 <% end -%>
 letsencrypt_bin=<%= @source_dir %>/letsencrypt-auto
+<% if @web_service -%>
 webserver=<%= @web_service %>
+<% end -%>
 
 script_dir=<%= @script_dir %>
 comm="bash ${script_dir}/$( basename $0 )"
@@ -57,15 +59,25 @@ elif [[ "$proceed" == sched ]] ; then
 
 elif [[ "$proceed" == run ]] ; then
 
+<% @pre_renew_cmds.each do |precmd| -%>
+    <%= precmd %>
+<% end -%>
+<% if @web_service -%>
     echo "Script needs to temporarily stop ${webserver}."
     service "$webserver" stop
     sleep 2
+<% end -%>
 
     echo "Renewing certificates."
     $letsencrypt_bin renew
     res=$?
 
+<% if @web_service -%>
     service "$webserver" start
+<% end -%>
+<% @post_renew_cmds.each do |postcmd| -%>
+    <%= postcmd %>
+<% end -%>
 
 <% if @email_to -%>
     if [[ $res -ne 0 ]] ; then

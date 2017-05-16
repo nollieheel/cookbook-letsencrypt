@@ -3,7 +3,7 @@
 # Cookbook Name:: cookbook-letsencrypt
 # Attribute:: default
 #
-# Copyright 2016, Earth U
+# Copyright 2017, Earth U
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,6 +40,8 @@ default[cb]['config_dir'] = '/opt/letsencrypt/config'
 
 default[cb]['renew']['script_dir']        = '/opt/letsencrypt/priv'
 default[cb]['renew']['webserver_service'] = 'nginx'
+default[cb]['renew']['pre_renew_cmds'] = []
+default[cb]['renew']['post_renew_cmds'] = []
 
 # In example below, LE will try to renew every 15 days at 8am.
 default[cb]['renew']['days'] = 15

@@ -1,3 +1,8 @@
+## 0.4.0 - 2017-05-17
+### Added
+- Attributes 'pre_renew_cmds' and 'post_renew_cmds' for custom script commands before and after the cert renew process, respectively.
+- Attribute 'webserver_service' can now be set to false to disable stopping and starting of any service in the script.
+
 ## 0.3.1 - 2016-01-04
 - Update metadata.rb to correct value.
 

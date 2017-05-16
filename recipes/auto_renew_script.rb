@@ -3,7 +3,7 @@
 # Cookbook Name:: cookbook-letsencrypt
 # Recipe:: auto_renew_script
 #
-# Copyright 2016, Earth U
+# Copyright 2017, Earth U
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,10 @@ template "#{node[cb]['renew']['script_dir']}/auto_renew" do
     :email_to      => node[cb]['renew']['fail_email'],
     :s_actions     => node[cb]['renew']['success_actions'],
     :sendmail_bin  => node[cb]['sendmail_bin'],
-    :log_path      => node[cb]['log_path']
+    :log_path      => node[cb]['log_path'],
+
+    :pre_renew_cmds  => node[cb]['renew']['pre_renew_cmds'],
+    :post_renew_cmds => node[cb]['renew']['post_renew_cmds']
   )
 end
 
