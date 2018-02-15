@@ -1,3 +1,7 @@
+## 0.5.0 - 2018-02-15
+### Changed
+- Removed version constraint on git dependency.
+
 ## 0.4.0 - 2017-05-17
 ### Added
 - Attributes 'pre_renew_cmds' and 'post_renew_cmds' for custom script commands before and after the cert renew process, respectively.
