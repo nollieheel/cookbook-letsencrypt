@@ -1,8 +1,8 @@
 # cookbook-letsencrypt-cookbook
 
-Installs using the Let's Encrypt Client as described [here](https://letsencrypt.readthedocs.io/en/latest/intro.html "Let's Encrypt Client Documentation"). Currently supports only the `standalone` plugin. So just simple stuff.
+Installs LetsEncrypt certificates using Certbot as described [here](https://certbot.eff.org/docs/install.html). For more information on how to use the certbot client, see [here](https://certbot.eff.org/docs/using.html).
 
-Also installs a script that attempts to auto-renew the certificates every specified number of days.
+Also installs a bash script that attempts to auto-renew the certificates every specified number of days.
 
 ## Supported Platforms
 
@@ -24,18 +24,6 @@ Currently tested on Ubuntu 14.04.
     <td><tt>[]</tt></td>
   </tr>
   <tr>
-    <td><tt>['cookbook-letsencrypt']['repo_url']</tt></td>
-    <td>String</td>
-    <td>URL of Lets Encrypt source.</td>
-    <td><tt>'https://github.com/letsencrypt/letsencrypt.git'</tt></td>
-  </tr>
-  <tr>
-    <td><tt>['cookbook-letsencrypt']['source_dir']</tt></td>
-    <td>String</td>
-    <td>Directory location of `letsencrypt-auto` binary.</td>
-    <td><tt>'/opt/letsencrypt/letsencrypt'</tt></td>
-  </tr>
-  <tr>
     <td><tt>['cookbook-letsencrypt']['config_dir']</tt></td>
     <td>String</td>
     <td>Where to put the generated config files for LE certs.</td>
@@ -46,12 +34,6 @@ Currently tested on Ubuntu 14.04.
     <td>String</td>
     <td>Where to put the auto-renew script.</td>
     <td><tt>'/opt/letsencrypt/priv'</tt></td>
-  </tr>
-  <tr>
-    <td><tt>['cookbook-letsencrypt']['renew']['webserver_service']</tt></td>
-    <td>String</td>
-    <td>Name of the currently running webserver service on the node. The auto-renew script needs to `service stop` it during every renewal attempt.</td>
-    <td><tt>'nginx'</tt></td>
   </tr>
   <tr>
     <td><tt>['cookbook-letsencrypt']['renew']['days']</tt></td>
@@ -66,34 +48,22 @@ Currently tested on Ubuntu 14.04.
     <td><tt>'8am'</tt></td>
   </tr>
   <tr>
-    <td><tt>['cookbook-letsencrypt']['renew']['fail_email']</tt></td>
-    <td>String/Boolean</td>
-    <td>If the auto-renewal attempt fails, an email alert can be sent to this address. Set to boolean `false` to disable this behavior.</td>
-    <td><tt>'your@email.com'</tt></td>
-  </tr>
-  <tr>
-    <td><tt>['cookbook-letsencrypt']['renew']['fail_subject']</tt></td>
+    <td><tt>['cookbook-letsencrypt']['renew']['pre_hook']</tt></td>
     <td>String</td>
-    <td>The subject of the alert email.</td>
-    <td><tt>'LetsEncrypt Cert Renewal Failure Alert'</tt></td>
+    <td>Shell command to run pre-renewal. Ex: "'service nginx restart'" (Note quotes).</td>
+    <td><tt>nil</tt></td>
   </tr>
   <tr>
-    <td><tt>['cookbook-letsencrypt']['renew']['success_actions']</tt></td>
-    <td>Array</td>
-    <td>Bash commands to perform immediately once the Letsencrypt "renew" call is successful.</td>
-    <td><tt>[]</tt></td>
-  </tr>
-  <tr>
-    <td><tt>['cookbook-letsencrypt']['sendmail_bin']</tt></td>
+    <td><tt>['cookbook-letsencrypt']['renew']['post_hook']</tt></td>
     <td>String</td>
-    <td>Enter here the location of the sendmail binary.</td>
-    <td><tt>'/usr/sbin/sendmail'</tt></td>
+    <td>Shell command to run post-renewal.</td>
+    <td><tt>nil</tt></td>
   </tr>
   <tr>
-    <td><tt>['cookbook-letsencrypt']['log_path']</tt></td>
+    <td><tt>['cookbook-letsencrypt']['renew']['fail_hook']</tt></td>
     <td>String</td>
-    <td>Enter here the location of the Lets Encrypt log file.</td>
-    <td><tt>'/var/log/letsencrypt/letsencrypt.log'</tt></td>
+    <td>Shell command to run in the event a renewal is attempted but has failed for whatever reason.</td>
+    <td><tt>(See attributes file)</tt></td>
   </tr>
 </table>
 
@@ -101,12 +71,23 @@ Currently tested on Ubuntu 14.04.
 
 ### cookbook-letsencrypt::default
 
+Populate the attributes necessary for your node. Different Certbot plugins might be appropriate depending on when this cookbook is run on the Chef client runlist. For example, if Nginx is installed first, `cookbook-letsencrypt` can then be run with the `nginx` plugin.
+
+```ruby
+default['cookbook-letsencrypt']['configs'] = [ {
+  :domains => ['mysite.com', 'www.mysite.com'],
+  :email => 'webmaster@mysite.com',
+  :authenticator => 'nginx',
+  :test => false
+} ]
+```
+
 Include `cookbook-letsencrypt` in your node's `run_list`:
 
 ```json
 {
   "run_list": [
-    "recipe[cookbook-letsencrypt::default]"
+    "recipe[cookbook-letsencrypt]"
   ]
 }
 ```

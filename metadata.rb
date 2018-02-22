@@ -6,9 +6,6 @@ description      'Installs/Configures cookbook-phpmyadmin'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 source_url       'https://github.com/nollieheel/cookbook-letsencrypt'
 issues_url       'https://github.com/nollieheel/cookbook-letsencrypt/issues'
-version          '0.5.0'
-
-depends 'git'
-depends 'apt', '~> 2.9.2'
+version          '1.0.0'
 
 supports 'ubuntu', '>= 14.04'

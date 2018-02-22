@@ -3,7 +3,7 @@
 # Cookbook Name:: cookbook-letsencrypt
 # Recipe:: auto_renew_script
 #
-# Copyright 2017, Earth U
+# Copyright 2018, Earth U
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,35 +18,25 @@
 # limitations under the License.
 #
 
-cb = cookbook_name
-
 package 'at'
 
-directory node[cb]['renew']['script_dir'] do
-  recursive true
-end
+directory node[cookbook_name]['renew']['script_dir'] { recursive true }
 
-template "#{node[cb]['renew']['script_dir']}/auto_renew" do
+template "#{node[cookbook_name]['renew']['script_dir']}/auto_renew.sh" do
   action   :create
   notifies :run, 'execute[schedule_auto_renew]'
   variables(
-    :days          => node[cb]['renew']['days'],
-    :time          => node[cb]['renew']['time'],
-    :script_dir    => node[cb]['renew']['script_dir'],
-    :web_service   => node[cb]['renew']['webserver_service'],
-    :source_dir    => node[cb]['source_dir'],
-    :email_subject => node[cb]['renew']['fail_subject'],
-    :email_to      => node[cb]['renew']['fail_email'],
-    :s_actions     => node[cb]['renew']['success_actions'],
-    :sendmail_bin  => node[cb]['sendmail_bin'],
-    :log_path      => node[cb]['log_path'],
-
-    :pre_renew_cmds  => node[cb]['renew']['pre_renew_cmds'],
-    :post_renew_cmds => node[cb]['renew']['post_renew_cmds']
+    :days        => node[cookbook_name]['renew']['days'],
+    :time        => node[cookbook_name]['renew']['time'],
+    :certbot_bin => node[cookbook_name]['bin'],
+    :script_dir  => node[cookbook_name]['renew']['script_dir'],
+    :pre_hook    => node[cookbook_name]['renew']['pre_hook'],
+    :post_hook   => node[cookbook_name]['renew']['post_hook'],
+    :fail_hook   => node[cookbook_name]['renew']['fail_hook']
   )
 end
 
 execute 'schedule_auto_renew' do
-  command "bash #{node[cb]['renew']['script_dir']}/auto_renew -s"
+  command "bash #{node[cookbook_name]['renew']['script_dir']}/auto_renew.sh -s"
   action  :nothing
 end

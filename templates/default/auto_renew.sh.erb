@@ -7,23 +7,15 @@
 run_time=<%= @time %>
 run_days=<%= @days %>
 
-<% if @email_to -%>
-email_to=<%= @email_to %>
-email_subj='<%= @email_subject %>'
-log_path=<%= @log_path %>
-sendmail_bin=<%= @sendmail_bin %>
-
-<% end -%>
-letsencrypt_bin=<%= @source_dir %>/letsencrypt-auto
-<% if @web_service -%>
-webserver=<%= @web_service %>
-<% end -%>
-
+certbot_bin=<%= @certbot_bin %>
 script_dir=<%= @script_dir %>
+
 comm="bash ${script_dir}/$( basename $0 )"
 
 usage() {
     echo "Usage: ${0} [-h | -s]"
+    echo "    -h   Show this help"
+    echo "    -s   Schedule next renewal"
 }
 
 proceed=run
@@ -59,40 +51,16 @@ elif [[ "$proceed" == sched ]] ; then
 
 elif [[ "$proceed" == run ]] ; then
 
-<% @pre_renew_cmds.each do |precmd| -%>
-    <%= precmd %>
-<% end -%>
-<% if @web_service -%>
-    echo "Script needs to temporarily stop ${webserver}."
-    service "$webserver" stop
-    sleep 2
-<% end -%>
-
     echo "Renewing certificates."
-    $letsencrypt_bin renew
+<% rcom = '$certbot_bin renew' -%>
+<% rcom << ( @pre_hook ? " --pre-hook #{@pre_hook}" : '' ) -%>
+<% rcom << ( @post_hook ? " --post-hook #{@post_hook}" : '' ) -%>
+    <%= rcom %>
     res=$?
 
-<% if @web_service -%>
-    service "$webserver" start
-<% end -%>
-<% @post_renew_cmds.each do |postcmd| -%>
-    <%= postcmd %>
-<% end -%>
-
-<% if @email_to -%>
+<% if @fail_hook -%>
     if [[ $res -ne 0 ]] ; then
-        echo "Error detected. Emailing ${email_to} now."
-        ERRLOG=$( tail "$log_path" )
-        echo -e "Subject: ${email_subj}\nTo: ${email_to}\n\n${ERRLOG}" |
-            $sendmail_bin -t
-    fi
-
-<% end -%>
-<% unless @s_actions.nil? || @s_actions.length == 0 -%>
-    if [[ $res -eq 0 ]] ; then
-<%   @s_actions.each do |sact| -%>
-        <%= sact %>
-<%   end -%>
+<%= @fail_hook %>
     fi
 
 <% end -%>

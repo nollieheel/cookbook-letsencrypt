@@ -1,9 +1,9 @@
 #
 # Author:: Earth U (<iskitingbords @ gmail.com>)
 # Cookbook Name:: cookbook-letsencrypt
-# Recipe:: install_from_git
+# Recipe:: install_binary
 #
-# Copyright 2017, Earth U
+# Copyright 2018, Earth U
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,26 +18,8 @@
 # limitations under the License.
 #
 
-cb = cookbook_name
-
-apt_repository 'git' do
-  uri          'ppa:git-core/ppa'
-  distribution node['lsb']['codename']
-end
-
-include_recipe 'git'
-
-directory ::File.dirname(node[cb]['source_dir']) do
-  recursive true
-end
-
-git node[cb]['source_dir'] do
-  repository node[cb]['repo_url']
-  action     :sync
-  notifies   :run, 'execute[init_le_auto]', :immediately
-end
-
-execute 'init_le_auto' do
-  command "#{node[cb]['source_dir']}/letsencrypt-auto --help"
-  action  :nothing
+directory ::File.dirname(node[cookbook_name]['bin']) { recursive true }
+remote_file node[cookbook_name]['bin'] do
+  source node[cookbook_name]['binary_url']
+  mode '0755'
 end

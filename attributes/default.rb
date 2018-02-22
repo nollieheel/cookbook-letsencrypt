@@ -3,7 +3,7 @@
 # Cookbook Name:: cookbook-letsencrypt
 # Attribute:: default
 #
-# Copyright 2017, Earth U
+# Copyright 2018, Earth U
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,44 +18,52 @@
 # limitations under the License.
 #
 
-cb = 'cookbook-letsencrypt'
-
-default[cb]['configs'] = [
+default['cookbook-letsencrypt']['configs'] = [
   #{
-    #:rsa_key_size  => '4096',            # default: '4096'
-    #:email         => 'admin@email.com', # default: ''
-    #:domains       => ['example.com'],   # default: []
-    ## No other authenticator plugins are supported yet by this cookbook
-    #:authenticator => 'standalone',      # default: 'standalone'
+    # Certbot subcommand that should be used when obtaining a certificate.
+    # Can be: run, certonly
+    # Default: certonly
+    #:command => 'certonly',
+
+    # Certbot installer to use. Can be: apache, nginx, nil.
+    # Default: nil (Do not use plugin)
+    #:installer => nil,
+
+    # Authenticator can be: apache, webroot, nginx, standalone, manual
+    # Default is: standalone
+    #:authenticator => 'standalone',
+
+    #:rsa_key_size => '2048', # default: '2048'
+    #:email        => String, # mandatory
+    #:domains      => [],     # mandatory
 
     #:test     => true, # default: true # Whether testing or not
-    #:get_cert => true  # default: true # Try to obtain certs or not
+    #:get_cert => true  # default: true # Try to obtain certs during recipe run
+
+    #:command_options => '' # Additional options to certbot-auto if desired
   #}
 ]
-default[cb]['repo_url']     = 'https://github.com/letsencrypt/letsencrypt.git'
-default[cb]['source_dir'] = '/opt/letsencrypt/letsencrypt'
-default[cb]['config_dir'] = '/opt/letsencrypt/config'
+
+default['cookbook-letsencrypt']['bin']        = '/usr/bin/certbot-auto'
+default['cookbook-letsencrypt']['config_dir'] = '/opt/letsencrypt/config'
+default['cookbook-letsencrypt']['binary_url'] = 'https://dl.eff.org/certbot-auto'
 
 # For auto-renew script:
 
-default[cb]['renew']['script_dir']        = '/opt/letsencrypt/priv'
-default[cb]['renew']['webserver_service'] = 'nginx'
-default[cb]['renew']['pre_renew_cmds'] = []
-default[cb]['renew']['post_renew_cmds'] = []
+# In example below, certbot will try to renew every 15 days at 8am.
+default['cookbook-letsencrypt']['renew']['days'] = 15
+default['cookbook-letsencrypt']['renew']['time'] = '8am' # server timezone
 
-# In example below, LE will try to renew every 15 days at 8am.
-default[cb]['renew']['days'] = 15
-default[cb]['renew']['time'] = '8am' # Timezone depends on server.
-
-# If renewal fails, send an alert email.
-# Set 'fail_email' to false to disable this behavior.
-default[cb]['renew']['fail_email']   = 'your@email.here'
-default[cb]['renew']['fail_subject'] = 'LetsEncrypt Cert Renewal Failure Alert'
-
-default[cb]['renew']['success_actions'] = []
-
-# Constants:
-
-default[cb]['sendmail_bin'] = '/usr/sbin/sendmail'
-default[cb]['log_path']     = '/var/log/letsencrypt/letsencrypt.log'
-default[cb]['install_dir']  = '/etc/letsencrypt'
+default['cookbook-letsencrypt']['renew']['script_dir'] = '/opt/letsencrypt/priv'
+# For pre-, post-, and fail- hooks, string values will be included
+# on the command line 'as is', so do not forget to add quotes for
+# non-trivial commands. e.g. "'service nginx restart'".
+default['cookbook-letsencrypt']['renew']['pre_hook']  = nil
+default['cookbook-letsencrypt']['renew']['post_hook'] = nil
+# Hook that runs if renewal was attempted but failed:
+default['cookbook-letsencrypt']['renew']['fail_hook'] =
+<<-EOT
+        echo "Error detected. Emailing my@email.com now."
+        errlog=$( tail /var/log/letsencrypt/letsencrypt.log )
+        echo -e "Subject: LetsEncrypt Cert Renewal Failure Alert\\nTo: my@email.com\\n\\n${errlog}" | /usr/sbin/sendmail -t
+EOT

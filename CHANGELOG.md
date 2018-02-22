@@ -1,3 +1,10 @@
+## 1.0.0 - 2018-02-22
+### Changed
+- Incompatible changes!
+- Now uses [Certbot](https://certbot.eff.org/docs/intro.html), instead of letsencrypt-auto.
+- Attributes have changed, including recipe names.
+- Removed unneeded dependencies.
+
 ## 0.5.0 - 2018-02-15
 ### Changed
 - Removed version constraint on git dependency.

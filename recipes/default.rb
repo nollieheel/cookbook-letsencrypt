@@ -1,9 +1,9 @@
 #
 # Author:: Earth U (<iskitingbords @ gmail.com>)
 # Cookbook Name:: cookbook-letsencrypt
-# Recipe:: install_from_git
+# Recipe:: default
 #
-# Copyright 2017, Earth U
+# Copyright 2018, Earth U
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,6 +18,6 @@
 # limitations under the License.
 #
 
-include_recipe "#{cookbook_name}::install_from_git"
+include_recipe "#{cookbook_name}::install_binary"
 include_recipe "#{cookbook_name}::get_certs"
 include_recipe "#{cookbook_name}::auto_renew_script"
